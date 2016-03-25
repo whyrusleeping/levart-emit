@@ -2,6 +2,7 @@ package main
 
 import (
 	api "github.com/ipfs/go-ipfs-api"
+	mdag "github.com/ipfs/go-ipfs/merkledag"
 	"log"
 	"os"
 	"strings"
@@ -36,12 +37,12 @@ func main() {
 			continue
 		}
 
-		obj, err := sh_gateway.ObjectGet(next)
+		blk, err := sh_gateway.BlockGet(next)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		outhash, err := sh_local.ObjectPut(obj)
+		outhash, err := sh_local.BlockPut(blk)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -49,9 +50,14 @@ func main() {
 			log.Fatalf("hash mismatch! %q != %q", next, outhash)
 		}
 
+		node, err := mdag.DecodeProtobuf(blk)
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		finished[outhash] = struct{}{}
-		for _, lnk := range obj.Links {
-			tofetch = append(tofetch, lnk.Hash)
+		for _, lnk := range node.Links {
+			tofetch = append(tofetch, lnk.Hash.B58String())
 		}
 	}
 }
