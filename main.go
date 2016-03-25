@@ -4,6 +4,7 @@ import (
 	api "github.com/ipfs/go-ipfs-api"
 	"log"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -13,6 +14,15 @@ func main() {
 
 	sh_local := api.NewShell("localhost:5001")
 	sh_gateway := api.NewShell("v04x.ipfs.io")
+
+	val, err := sh_gateway.ResolvePath(os.Args[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if strings.HasPrefix(val, "/ipfs/") {
+		val = val[6:]
+	}
 
 	finished := make(map[string]struct{})
 	tofetch := []string{os.Args[1]}
