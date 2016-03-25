@@ -37,6 +37,7 @@ func main() {
 			continue
 		}
 
+		log.Printf(" - fetching %q", next)
 		blk, err := sh_gateway.BlockGet(next)
 		if err != nil {
 			log.Fatal(err)
@@ -60,4 +61,5 @@ func main() {
 			tofetch = append(tofetch, lnk.Hash.B58String())
 		}
 	}
+	log.Println("success!")
 }
