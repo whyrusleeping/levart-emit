@@ -24,8 +24,10 @@ func main() {
 		val = val[6:]
 	}
 
+	log.Printf("input resolved to %q", val)
+
 	finished := make(map[string]struct{})
-	tofetch := []string{os.Args[1]}
+	tofetch := []string{val}
 	for len(tofetch) > 0 {
 		next := tofetch[0]
 		tofetch = tofetch[1:]
